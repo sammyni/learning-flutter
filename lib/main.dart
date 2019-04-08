@@ -7,28 +7,74 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
   
-    final wordPair = WordPair.random();
-        return MaterialApp(
-          title: 'Welcome to flutter',
-          home: Scaffold(
-            appBar: AppBar(
-              title: Text('Welcome to Flutter'),
-            ),
-            body: Center(
-              // child: Text('Hello World'),
-              // child: Text(wordPair.asPascalCase),
-              child: RandomWords(),
+    // final wordPair = WordPair.random();
+    return MaterialApp(
+      title: 'Startup Name Generator',
+      home: RandomWords(),
+      /*
+      title: 'Welcome to flutter',
+      home: Scaffold(
+        appBar: AppBar(
+          // title: Text('Welcome to Flutter'),
+          title: Text('Start Name Generator'),
+        ),
+        body: Center(
+          // child: Text('Hello World'),
+          // child: Text(wordPair.asPascalCase),
+          child: RandomWords(),
         ),
       ),
+      */
     );
   }
 }
 
 class RandomWordsState extends State<RandomWords> {
+  final List<WordPair> _suggestions = <WordPair>[];
+  final Set<WordPair> _saved = new Set<WordPair>();
+  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return Text(wordPair.asPascalCase);
+    
+    // final wordPair = WordPair.random();
+    // return Text(wordPair.asPascalCase);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Startup Name Generator'),
+      ),
+      body: _buildSuggestions(),
+    );
+  }
+
+  Widget _buildSuggestions() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) {
+        if (i.isOdd) return Divider();
+
+        final index = i ~/ 2;
+
+        if ( index >= _suggestions.length) {
+          _suggestions.addAll(generateWordPairs().take(10));
+        }
+        return _buildRow(_suggestions[index]);
+      }
+    );
+  }
+
+  Widget _buildRow(WordPair pair) {
+    final bool alreadySaved = _saved.contains(pair);
+    return ListTile(
+      title: Text(
+        pair.asPascalCase,
+        style: _biggerFont,
+      ),
+      trailing: new Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
+    );
   }
 }
 
